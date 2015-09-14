@@ -1,15 +1,11 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of Viswoole_Worker
+ * Queue worker that handles checking queues for jobs, fetching them
+ * off the queues, running them and handling the result.
  *
- * @author Vic
+ * @package		Viswoole/Worker
+ * @author             Victor<victorzsg@gmail.com>
  */
 
 namespace Viswoole;
@@ -17,9 +13,14 @@ namespace Viswoole;
 class Viswoole_Worker {
 
     /**
-     * log manage
+     * @var LoggerInterface Logging object that impliments the PSR-3 LoggerInterface
      */
     private $logger;
+
+    /**
+     * @var array Array of all associated queues for this worker.
+     */
+    private $queues = array();
 
     /**
      * Instantiate a new worker, given a list of queues that it should be working
@@ -32,8 +33,12 @@ class Viswoole_Worker {
      *
      * @param string|array $queues String with a single queue name, array with multiple.
      */
-    public function __construct() {
+    public function __construct($queues) {
         $this->logger = new Viswoole_Log();
+
+        !is_array($queues) && $queues = array($queues);
+
+        $this->queues = $queues;
     }
 
     /**

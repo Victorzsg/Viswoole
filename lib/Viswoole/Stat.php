@@ -7,10 +7,21 @@
  */
 
 /**
- * Description of Stat
+ * Description of the status about server Worker
  *
  * @author Vic
  */
+
+namespace Viswoole;
+
 class Viswoole_Stat {
-    //put your code here
+
+    public function __construct() {
+        ;
+    }
+
+    public static function get() {
+        
+    }
+
 }

@@ -7,10 +7,17 @@
  */
 
 /**
- * Description of Viswoole_Job
+ * Description of Job about client Job
  *
  * @author Vic
  */
+
+namespace Viswoole;
+
 class Viswoole_Job {
-    //put your code here
+
+    public function __construct() {
+        ;
+    }
+
 }

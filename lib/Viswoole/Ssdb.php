@@ -18,19 +18,19 @@ class Viswoole_Ssdb {
     private $name = "";
 
     /**
-     *
-     * @var type 
+     * The SSDB server host
+     * @var string
      */
     private $host = "localhost";
 
     /**
-     *
-     * @var type 
+     * The SSDB server port
+     * @var int 
      */
     private $port = 6501;
 
     /**
-     * @var array List of all commands in Redis that supply a key as their
+     * @var array List of all commands in SSDB that supply a key as their
      * 	first argument. Used to prefix keys with the Viswoole namespace.
      */
     private $keyCommands = array(

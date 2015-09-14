@@ -12,5 +12,9 @@
  * @author Administrator
  */
 class swoole {
-    //put your code here
+
+    public function __construct() {
+        
+    }
+
 }

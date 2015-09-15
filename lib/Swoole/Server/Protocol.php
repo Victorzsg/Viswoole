@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoole;
+namespace Swoole\Server;
 
 interface Protocol {
 

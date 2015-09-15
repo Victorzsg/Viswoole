@@ -1,10 +1,8 @@
 <?php
 
-namespace Swoole\Network\Protocol;
+namespace Swoole\Server;
 
-use Swoole;
-
-class BaseServer implements Swoole\Protocol {
+class TcpServer extends BaseServer {
 
     public function onReceive($server, $clientId, $fromId, $data) {
         

@@ -10,5 +10,7 @@ interface Driver {
 
     function close($client_id);
 
-    function setProtocol($protocol);
+    function setServer();
+    
+    function setDb();
 }

@@ -1,24 +1,16 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+use Swoole\Server;
 
-/**
- * Description of swoole
- *
- * @author Administrator
- */
-class swoole {
+class Viswoole {
 
     const VERSION = '1.0';
 
     /**
      * @var Viswoole_Ssdb Instance of Viswoole_Ssdb that talks to ssdb.
      */
-    public static $ssdb = null;
+    public static $db = null;
+    private $server;
 
     public function __construct() {
         
@@ -29,8 +21,18 @@ class swoole {
      *
      * @return Viswoole_Ssdb Instance of Viswoole_Ssdb.
      */
-    public static function ssdb() {
+    public static function db() {
         
+    }
+
+    public static function createTcpServer() {
+        $this->server = new Server(Server\Server::SERVER_TYPE_TCP);
+        $this->server->run();
+    }
+
+    public static function createHttpServer() {
+        $this->server = new Server(Server\Server::SERVER_TYPE_HTTP);
+        $this->server->run();
     }
 
 }

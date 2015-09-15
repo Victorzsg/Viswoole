@@ -2,12 +2,41 @@
 
 namespace Swoole;
 
-class Server extends Network\Protocol\BaseServer implements Server\Driver {
+use Database\Db;
+use Swoole\Server\Server;
+
+class Server implements Interfaces\Driver {
+
+    protected $server;
+    protected $db;
+
+    public function __construct() {
+        
+    }
+
+    public function setDb() {
+        $this->db = Db::getInstance(Db::DATA_TYPE_SSDB, $config);
+    }
+
+    public function setServer() {
+        $this->server = Server::getInstance(Server::SERVER_TYPE_TCP, $config);
+    }
+
+    public function run($setting) {
+        $swoole_setting = require dirname(__DIR__) . '/configs/swoole.php';
+        $server = new swoole_server($host, $port, SWOOLE_BASE);
+        $swoole_setting['open_eof_check'] = true;
+        $swoole_setting['open_eof_split'] = true;
+        $swoole_setting['package_eof'] = self::EOF;
+        $server->set($swoole_setting);
+        $server->on('WorkerStart', [$this->server, 'onStart']);
+        $server->on('WorkerStop', [$this->server, 'onStop']);
+        $server->on('receive', [$this->server, 'onReceive']);
+        $this->server->start();
+    }
 
     protected $root;
     protected $config;
-    protected $server;
-    protected $leveldb;
     protected $head_index;
     protected $tail_index;
     protected $pop_count = 0;
@@ -15,13 +44,13 @@ class Server extends Network\Protocol\BaseServer implements Server\Driver {
 
     const EOF = "\r\n";
 
-    function __construct() {
-        $this->root = dirname(__DIR__);
-        $this->config = require $this->root . '/configs/leveldb.php';
-        if (!is_dir($this->root . '/data/')) {
-            mkdir($this->root . '/data/');
-        }
-    }
+    /* function __construct() {
+      $this->root = dirname(__DIR__);
+      $this->config = require $this->root . '/configs/leveldb.php';
+      if (!is_dir($this->root . '/data/')) {
+      mkdir($this->root . '/data/');
+      }
+      } */
 
     function onStart(swoole_server $serv, $worker_id) {
         $this->leveldb = new LevelDB($this->root . '/data', $this->config['options'], $this->config['readoptions'], $this->config['writeoptions']);
@@ -95,4 +124,9 @@ class Server extends Network\Protocol\BaseServer implements Server\Driver {
         $this->server->start();
     }
 
+    function send($client_id, $data);
+
+    function close($client_id);
+
+    function setProtocol($protocol);
 }

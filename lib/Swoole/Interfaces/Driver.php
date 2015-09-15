@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoole;
+namespace Swoole\Interfaces;
 
 interface Driver {
 

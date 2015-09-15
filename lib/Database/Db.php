@@ -2,7 +2,7 @@
 
 namespace Database;
 
-class Data {
+class Db {
 
     const DATA_TYPE_SSDB = "ssdb";
     const DATA_TYPE_REDIS = "redis";

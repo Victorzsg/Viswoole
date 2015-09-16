@@ -7,9 +7,9 @@
  * @author             Victor<victorzsg@gmail.com>
  */
 
-namespace Viswoole;
+namespace Database;
 
-class Viswoole_Ssdb {
+class Ssdb extends Base {
 
     /**
      *
@@ -93,6 +93,14 @@ class Viswoole_Ssdb {
      */
     public function getCount() {
         
+    }
+
+    public function pop() {
+        ;
+    }
+
+    public function push() {
+        ;
     }
 
 }

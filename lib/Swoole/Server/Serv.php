@@ -18,25 +18,12 @@ class Serv {
     private static $instance = null;
 
     /**
-     * 服务对应参数数组
-     * @var array
-     */
-    private $config = array();
-
-    /**
-     * 服务类型
-     * @var string
-     */
-    private $type = SERVER_TYPE_TCP;
-
-    /**
      * 实例构造函数
      * @param string $type
      * @param array $config
      */
-    private function __construct($type, $config) {
-        !empty($type) && $this->type = $type;
-        !empty($config) && $this->config = $config;
+    private function __construct() {
+        
     }
 
     /**
@@ -48,16 +35,11 @@ class Serv {
     public static function getInstance($type, $config) {
 
         if (!(self::$instance instanceof BaseServer)) {
-            switch ($type) {
-                case SERVER_TYPE_HTTP:
-                    self::$instance = new HttpServer($config);
-                    break;
-                case SERVER_TYPE_TCP:
-                    self::$instance = new TcpServer($config);
-                    break;
-                case SERVER_TYPE_UDP:
-                    self::$instance = new UdpServer($config);
-                    break;
+            $class = 'Swoole\\Server\\'.ucfirst($type) . 'Server';
+            if (class_exists($class)) {
+                self::$instance = new $class((array) $config);
+            } else {
+                self::$instance = null;
             }
         }
         return self::$instance;

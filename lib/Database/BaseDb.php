@@ -16,6 +16,7 @@ abstract class BaseDb implements DataInterface {
      * 服务队列名称
      */
     const LIST_QUEUE = "list_queue";
+    const HASH_QUEUE = "hash_queue";
 
     /**
      * 由数据库类型决定 数据库对象

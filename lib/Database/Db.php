@@ -18,25 +18,11 @@ class Db {
     private static $instance = null;
 
     /**
-     * 数据库对应参数数组
-     * @var array
-     */
-    private $config = array();
-
-    /**
-     * 数据库类型
-     * @var string
-     */
-    private $type = DATA_TYPE_SSDB;
-
-    /**
      * 实例构造函数
-     * @param string $type
-     * @param array $config
+     * 
      */
-    private function __construct($type, $config) {
-        !empty($type) && $this->type = $type;
-        !empty($config) && $this->config = $config;
+    private function __construct() {
+        
     }
 
     /**
@@ -48,13 +34,11 @@ class Db {
     public static function getInstance($type, $config) {
 
         if (!(self::$instance instanceof BaseDb)) {
-            switch ($type) {
-                case DATA_TYPE_SSDB:
-                    self::$instance = new Ssdb((array) $config);
-                    break;
-                case DATA_TYPE_REDIS:
-                    self::$instance = new Redis((array) $config);
-                    break;
+            $class = 'Database\\'.ucfirst($type);
+            if (class_exists($type)) {
+                self::$instance = new $class((array) $config);
+            } else {
+                self::$instance = null;
             }
         }
         return self::$instance;

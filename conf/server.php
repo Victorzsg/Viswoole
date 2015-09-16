@@ -10,11 +10,12 @@
  * @author             Victor<victorzsg@gmail.com>
  */
 return array(
+    "type" => SERVER_TYPE_TCP,
     "hostname" => "localhost",
     "port" => 9501,
     "swoole_setting" => array(
         'worker_num' => 2, //工作进程数量
-        'daemonize' => true, //是否作为守护进程
+        //'daemonize' => true, //是否作为守护进程
     ),
 );
 

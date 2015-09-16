@@ -30,6 +30,22 @@ class Redis extends BaseDb {
     }
 
     /**
+     * 接口函数 设置函数
+     * @param string $data 函数数据
+     */
+    public function set($data) {
+        $this->db_client->hset(self::HASH_QUEUE, $data, 1);
+    }
+
+    /**
+     * 接口函数 获取函数
+     * @param string $data 函数数据
+     */
+    public function get($data) {
+        $this->db_client->hget(self::HASH_QUEUE, $data);
+    }
+
+    /**
      * 构造函数
      * 实例化redis处理对象并连接redis服务器
      * @param array $config

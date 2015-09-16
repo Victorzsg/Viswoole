@@ -21,4 +21,14 @@ interface DataInterface {
      * @param string $data 入队数据
      */
     function push($data);
+
+    /**
+     * 接口函数 设置函数
+     */
+    function set($data);
+
+    /**
+     * 接口函数 获取函数
+     */
+    function get($data);
 }

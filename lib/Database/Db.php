@@ -18,10 +18,10 @@ class Db {
         if (!(self::$instance instanceof Base)) {
             switch ($type) {
                 case DATA_TYPE_SSDB:
-                    self::$instance = new Ssdb($type, $config);
+                    self::$instance = new Ssdb($config);
                     break;
                 case DATA_TYPE_REDIS:
-                    self::$instance = new Redis($type, $config);
+                    self::$instance = new Redis($config);
                     break;
             }
         }

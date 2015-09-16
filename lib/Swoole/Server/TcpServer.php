@@ -5,9 +5,11 @@ namespace Swoole\Server;
 class TcpServer extends BaseServer {
 
     public function __construct($config = array()) {
-        in_array("hostname", $config) && $this->host = $config["hostname"];
-        in_array("post", $config) && $this->port = $config["port"];
-        $this->swoole_server = new \swoole_server($this->host, $this->port, SWOOLE_BASE);
+        parent::__construct();
+        $this->setDb();
+        array_key_exists("hostname", $config) && $this->host = $config["hostname"];
+        array_key_exists("post", $config) && $this->port = $config["port"];
+        $this->swoole_server = new \swoole_server($this->host, $this->port);
     }
 
     public function onShutdown($serv, $workerId) {
@@ -15,7 +17,7 @@ class TcpServer extends BaseServer {
     }
 
     public function onConnect($server, $fd, $fromId) {
-        
+        echo "ffff\n";
     }
 
     public function onClose($server, $fd, $fromId) {
@@ -40,6 +42,7 @@ class TcpServer extends BaseServer {
 
     public function onStart($serv, $worker_id) {
         echo "start\n";
+        $this->db->push($worker_id);
         /* $this->leveldb = new LevelDB($this->root . '/data', $this->config['options'], $this->config['readoptions'], $this->config['writeoptions']);
           $this->head_index = (int) $this->leveldb->get('_head_index');
           $this->tail_index = (int) $this->leveldb->get('_tail_index'); */
@@ -98,6 +101,10 @@ class TcpServer extends BaseServer {
         /*
           $this->leveldb->set('_head_index', $this->head_index);
           $this->leveldb->set('_tail_index', $this->tail_index); */
+    }
+
+    public function on($name, $param) {
+        $this->swoole_server->on($name, $param);
     }
 
 }

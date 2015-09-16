@@ -12,5 +12,4 @@ interface Driver {
 
     function setServer();
     
-    function setDb();
 }

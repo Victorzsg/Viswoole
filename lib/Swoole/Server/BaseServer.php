@@ -14,7 +14,7 @@ abstract class BaseServer implements \Swoole\Server\Protocol {
      * The SSDB server port
      * @var int 
      */
-    protected $port = 6501;
+    protected $port = 9501;
     public $swoole_server = null;
 
 }

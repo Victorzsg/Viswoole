@@ -8,19 +8,19 @@ abstract class Base implements DataInterface {
      *
      * @var type 
      */
-    private $name = "";
+    protected $name = "";
 
     /**
      * The SSDB server host
      * @var string
      */
-    private $host = "localhost";
+    protected $host = "localhost";
 
     /**
      * The SSDB server port
      * @var int 
      */
-    private $port = 6501;
+    protected $port = 9501;
 
     public function __construct() {
         ;

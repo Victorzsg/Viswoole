@@ -45,7 +45,17 @@ class Server implements Interfaces\Driver {
     public function on() {
         $this->server->swoole_server->on('WorkerStart', [$this->server, 'onStart']);
         $this->server->swoole_server->on('WorkerStop', [$this->server, 'onStop']);
-        $this->server->swoole_server->on('receive', [$this->server, 'onReceive']);
+        //$this->server->swoole_server->on('receive', [$this->server, 'onReceive']);
+        $this->server->swoole_server->on('connect', function ($serv, $fd) {
+            echo "Client:Connect.\n";
+        });
+        $this->server->swoole_server->on('receive', function ($serv, $fd, $from_id, $data) {
+            $serv->send($fd, 'Swoole: ' . $data);
+            $serv->close($fd);
+        });
+        $this->server->swoole_server->on('close', function ($serv, $fd) {
+            echo "Client: Close.\n";
+        });
     }
 
     public function run() {

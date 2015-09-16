@@ -7,7 +7,7 @@ class TcpServer extends BaseServer {
     public function __construct($config = array()) {
         in_array("hostname", $config) && $this->host = $config["hostname"];
         in_array("post", $config) && $this->port = $config["port"];
-        $this->swoole_server = new \swoole_server($this->host, $this->port, SWOOLE_BASE);
+        $this->swoole_server = new \swoole_server($this->host, $this->port);
     }
 
     public function onShutdown($serv, $workerId) {
@@ -15,7 +15,7 @@ class TcpServer extends BaseServer {
     }
 
     public function onConnect($server, $fd, $fromId) {
-        
+        echo "ffff\n";
     }
 
     public function onClose($server, $fd, $fromId) {

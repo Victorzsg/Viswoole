@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * swoole服务进程回调函数接口类 Protocol
+ * 
+ * @package		Swoole/Server/Protocol
+ * @author             Victor<victorzsg@gmail.com>
+ */
+
 namespace Swoole\Server;
 
 interface Protocol {
@@ -19,6 +26,9 @@ interface Protocol {
     function onFinish($serv, $task_id, $data);
 
     function onTimer($serv, $interval);
-    
+
+    /**
+     * 设置服务对应队列存放数据库并进行实例化数据库实例
+     */
     function setDb();
 }

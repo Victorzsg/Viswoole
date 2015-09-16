@@ -1,9 +1,23 @@
 <?php
 
+/**
+ * Tcp服务操作基类 TcpServer
+ * 继承自服务操作基类BaseServer
+ * 
+ * @package		Swoole/Server/TcpServer
+ * @author             Victor<victorzsg@gmail.com>
+ */
+
 namespace Swoole\Server;
 
 class TcpServer extends BaseServer {
 
+    /**
+     * 构造函数
+     * 实例化服务处理对象
+     * @param array $config
+     * @throws CException
+     */
     public function __construct($config = array()) {
         parent::__construct();
         $this->setDb();
@@ -42,18 +56,39 @@ class TcpServer extends BaseServer {
 
     public function onStart($serv, $worker_id) {
         echo "start\n";
-        $this->db->push($worker_id);
         /* $this->leveldb = new LevelDB($this->root . '/data', $this->config['options'], $this->config['readoptions'], $this->config['writeoptions']);
           $this->head_index = (int) $this->leveldb->get('_head_index');
           $this->tail_index = (int) $this->leveldb->get('_tail_index'); */
     }
 
     public function onReceive($serv, $fd, $reactor_id, $data) {
+
+        $json_data = json_decode($data, TRUE);
+        $op = array_key_exists("op", $json_data) ? strtolower($json_data["op"]) : "";
+        $op_data = array_key_exists("data", $json_data) ? $json_data["data"] : "";
+
+        switch ($op) {
+            case HASH_TYPE_SET://设置函数调用
+                $this->db->set($op_data);
+                break;
+            case HASH_TYPE_GET://获取函数
+                $this->db->get($op_data);
+                break;
+            case LIST_TYPE_POP:
+                $this->db->pop();
+                break;
+            case LIST_TYPE_PUSH:
+                $this->db->push($op_data);
+            default:
+                break;
+        }
+        $serv->send($fd, 'Swoole: ' . $data);
+        $serv->close($fd);
         /* $op = strtolower(strstr($data, ' ', true));
           //出队
           if ($op == 'pop') {
           if ($this->head_index >= $this->tail_index) {
-          $serv->send($fd, 'ERR empty' . self::EOF);
+          $serv->send($fd, 'ERR empty' . EOF);
           return;
           }
           $result = $this->leveldb->get('data_' . $this->head_index);
@@ -65,14 +100,14 @@ class TcpServer extends BaseServer {
           {
           $this->leveldb->set('_head_index', $this->head_index);
           }
-          $serv->send($fd, 'OK ' . $result . self::EOF);
+          $serv->send($fd, 'OK ' . $result . EOF);
           } else {
-          $serv->send($fd, 'ERR get() failed.' . self::EOF);
+          $serv->send($fd, 'ERR get() failed.' . EOF);
           }
           }
           //入队
           elseif ($op == 'push') {
-          $result = $this->leveldb->set('data_' . $this->tail_index, substr($data, 5, strlen($data) - 5 - strlen(self::EOF)));
+          $result = $this->leveldb->set('data_' . $this->tail_index, substr($data, 5, strlen($data) - 5 - strlen(EOF)));
           if ($result) {
           $this->tail_index++;
           $this->push_count++;
@@ -80,20 +115,19 @@ class TcpServer extends BaseServer {
           {
           $this->leveldb->set('_tail_index', $this->tail_index);
           }
-          $serv->send($fd, 'OK ' . self::EOF);
+          $serv->send($fd, 'OK ' . EOF);
           } else {
-          $serv->send($fd, 'ERR write to leveldb failed.' . self::EOF);
+          $serv->send($fd, 'ERR write to leveldb failed.' . EOF);
           }
           } elseif ($op == 'stats') {
           $serv->send($fd, 'OK ' . var_export(['head_index' => $this->head_index,
           'tail_index' => $this->tail_index,
           'push_count' => $this->push_count,
           'pop_count' => $this->pop_count,
-          ], true) . self::EOF);
+          ], true) . EOF);
           } else {
-          $serv->send($fd, 'ERR unsupported command [' . $op . ']' . self::EOF);
+          $serv->send($fd, 'ERR unsupported command [' . $op . ']' . EOF);
           } */
-        echo "resta\n";
     }
 
     public function onStop() {
@@ -103,6 +137,11 @@ class TcpServer extends BaseServer {
           $this->leveldb->set('_tail_index', $this->tail_index); */
     }
 
+    /**
+     * 绑定swoole服务回调函数
+     * @param string $name
+     * @param string|array $param
+     */
     public function on($name, $param) {
         $this->swoole_server->on($name, $param);
     }

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * The methods about log
- *
- * @package		Viswoole/Ssdb
+ * Viswoole日志操作
+ * 
+ * @package		Viswoole/Viswoole_Log
  * @author             Victor<victorzsg@gmail.com>
  */
 

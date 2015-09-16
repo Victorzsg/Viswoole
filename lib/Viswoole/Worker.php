@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Queue worker that handles checking queues for jobs, fetching them
- * off the queues, running them and handling the result.
- *
- * @package		Viswoole/Worker
+ * Viswoole工作者操作
+ * 
+ * @package		Viswoole/Viswoole_Worker
  * @author             Victor<victorzsg@gmail.com>
  */
 

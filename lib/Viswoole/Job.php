@@ -1,15 +1,10 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of Job about client Job
- *
- * @author Vic
+ * Viswoole任务操作
+ * 
+ * @package		Viswoole_Job
+ * @author             Victor<victorzsg@gmail.com>
  */
 
 namespace Viswoole;

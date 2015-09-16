@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Udp服务操作基类 UdpServer
+ * 继承自服务操作基类BaseServer
+ * 
+ * @package		Swoole/Server/UdpServer
+ * @author             Victor<victorzsg@gmail.com>
+ */
+
 namespace Swoole\Server;
 
 class UdpServer extends BaseServer {

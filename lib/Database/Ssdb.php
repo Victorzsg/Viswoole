@@ -1,9 +1,10 @@
 <?php
 
 /**
- * The methods about ssdb
- *
- * @package		Viswoole/Ssdb
+ * Ssdb数据库操作基类 Ssdb
+ * 继承自数据库基类BaseDb
+ * 
+ * @package		Database/Ssdb
  * @author             Victor<victorzsg@gmail.com>
  */
 
@@ -64,28 +65,29 @@ class Ssdb extends BaseDb {
     );
 
     /**
-     * 
+     * 接口函数 出队
+     * 接口类出队函数的具体实现
      */
-    public function getCount() {
-        
-    }
-
     public function pop() {
         ;
     }
 
-    public function push() {
+    /**
+     * 接口函数 入队
+     * 接口类出队函数的具体实现
+     * @param string $data 入队数据
+     */
+    public function push($data) {
         ;
     }
 
-    private $debug = false;
-    public $sock = null;
-    private $_closed = false;
-    private $recv_buf = '';
-    private $_easy = false;
-    public $last_resp = null;
-
-    function __construct($host, $port, $timeout_ms = 2000) {
+    /**
+     * 构造函数
+     * 实例化ssdb处理对象并连接ssdb服务器
+     * @param array $config
+     * @throws CException
+     */
+    public function __construct($host, $port, $timeout_ms = 2000) {
         $timeout_f = (float) $timeout_ms / 1000;
         $this->sock = @stream_socket_client("$host:$port", $errno, $errstr, $timeout_f);
         if (!$this->sock) {
@@ -98,6 +100,13 @@ class Ssdb extends BaseDb {
             @stream_set_chunk_size($this->sock, 1024 * 1024);
         }
     }
+
+    private $debug = false;
+    public $sock = null;
+    private $_closed = false;
+    private $recv_buf = '';
+    private $_easy = false;
+    public $last_resp = null;
 
     function set_timeout($timeout_ms) {
         $timeout_sec = intval($timeout_ms / 1000);

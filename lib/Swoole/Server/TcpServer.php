@@ -1,9 +1,23 @@
 <?php
 
+/**
+ * Tcp服务操作基类 TcpServer
+ * 继承自服务操作基类BaseServer
+ * 
+ * @package		Swoole/Server/TcpServer
+ * @author             Victor<victorzsg@gmail.com>
+ */
+
 namespace Swoole\Server;
 
 class TcpServer extends BaseServer {
 
+    /**
+     * 构造函数
+     * 实例化服务处理对象
+     * @param array $config
+     * @throws CException
+     */
     public function __construct($config = array()) {
         parent::__construct();
         $this->setDb();
@@ -103,6 +117,11 @@ class TcpServer extends BaseServer {
           $this->leveldb->set('_tail_index', $this->tail_index); */
     }
 
+    /**
+     * 绑定swoole服务回调函数
+     * @param string $name
+     * @param string|array $param
+     */
     public function on($name, $param) {
         $this->swoole_server->on($name, $param);
     }

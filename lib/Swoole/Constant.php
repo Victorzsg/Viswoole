@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * 常量配置文件
+ */
 //数据库类型
 define("DATA_TYPE_SSDB", "ssdb");
 define("DATA_TYPE_REDIS", "redis");

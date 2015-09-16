@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Http服务操作基类 HttpServer
+ * 继承自服务操作基类BaseServer
+ * 
+ * @package		Swoole/Server/HttpServer
+ * @author             Victor<victorzsg@gmail.com>
+ */
+
 namespace Swoole\Server;
 
 class HttpServer extends BaseServer {

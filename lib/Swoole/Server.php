@@ -3,7 +3,7 @@
 namespace Swoole;
 
 use Database\Db;
-use Swoole\Server\Server;
+use Swoole\Server\Serv;
 
 class Server implements Interfaces\Driver {
 
@@ -15,23 +15,23 @@ class Server implements Interfaces\Driver {
     protected $db_conf;
 
     public function init() {
+        $this->setDb();
+        $this->setServer();
         $this->setting();
         $this->on();
     }
 
     public function __construct() {
-        $this->db_conf = require dirname(__DIR__) . '/conf/db.php';
-        $this->server_conf = require dirname(__DIR__) . '/conf/server.php';
-        $this->setDb();
-        $this->setServer();
+        $this->db_conf = require CONFPATH . 'db.php';
+        $this->server_conf = require CONFPATH . 'server.php';
     }
 
     public function setDb() {
-        $this->db = Db::getInstance(Db::DATA_TYPE_SSDB, $this->db_conf);
+        $this->db = Db::getInstance(DATA_TYPE_SSDB, $this->db_conf);
     }
 
     public function setServer() {
-        $this->server = Server::getInstance(Server::SERVER_TYPE_TCP, $this->server_conf);
+        $this->server = Serv::getInstance(SERVER_TYPE_TCP, $this->server_conf);
     }
 
     public function setting() {
@@ -39,17 +39,17 @@ class Server implements Interfaces\Driver {
         $swoole_setting['open_eof_check'] = true;
         $swoole_setting['open_eof_split'] = true;
         $swoole_setting['package_eof'] = self::EOF;
-        $this->server->set($swoole_setting);
+        $this->server->swoole_server->set($swoole_setting);
     }
 
     public function on() {
-        $this->server->on('WorkerStart', [$this->server, 'onStart']);
-        $this->server->on('WorkerStop', [$this->server, 'onStop']);
-        $this->server->on('receive', [$this->server, 'onReceive']);
+        $this->server->swoole_server->on('WorkerStart', [$this->server, 'onStart']);
+        $this->server->swoole_server->on('WorkerStop', [$this->server, 'onStop']);
+        $this->server->swoole_server->on('receive', [$this->server, 'onReceive']);
     }
 
     public function run() {
-        $this->server->start();
+        $this->server->swoole_server->start();
     }
 
     /* protected $root;

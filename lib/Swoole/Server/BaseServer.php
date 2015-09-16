@@ -2,18 +2,19 @@
 
 namespace Swoole\Server;
 
-abstract class BaseServer implements \Swoole\Interfaces\Protocol {
+abstract class BaseServer implements \Swoole\Server\Protocol {
 
     /**
      * The SSDB server host
      * @var string
      */
-    private $host = "localhost";
+    protected $host = "localhost";
 
     /**
      * The SSDB server port
      * @var int 
      */
-    private $port = 6501;
+    protected $port = 6501;
+    public $swoole_server = null;
 
 }

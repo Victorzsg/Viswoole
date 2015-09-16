@@ -4,12 +4,9 @@ namespace Database;
 
 class Db {
 
-    const DATA_TYPE_SSDB = "ssdb";
-    const DATA_TYPE_REDIS = "redis";
-
     private static $instance = null;
     private $config = array();
-    private $type = self::DATA_TYPE_SSDB;
+    private $type = DATA_TYPE_SSDB;
 
     private function __construct($type, $config) {
         !empty($type) && $this->type = $type;
@@ -18,17 +15,17 @@ class Db {
 
     public static function getInstance($type, $config) {
 
-        if (!($this->instance instanceof Base)) {
+        if (!(self::$instance instanceof Base)) {
             switch ($type) {
-                case self::DATA_TYPE_SSDB:
-                    $this->instance = new Ssdb($type, $config);
+                case DATA_TYPE_SSDB:
+                    self::$instance = new Ssdb($type, $config);
                     break;
-                case self::DATA_TYPE_REDIS:
-                    $this->instance = new Redis($type, $config);
+                case DATA_TYPE_REDIS:
+                    self::$instance = new Redis($type, $config);
                     break;
             }
         }
-        return $this->instance;
+        return self::$instance;
     }
 
 }

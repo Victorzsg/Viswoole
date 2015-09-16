@@ -4,7 +4,7 @@ namespace Swoole\Interfaces;
 
 interface Driver {
 
-    function run($setting);
+    function run();
 
     function send($client_id, $data);
 

@@ -19,4 +19,6 @@ interface Protocol {
     function onFinish($serv, $task_id, $data);
 
     function onTimer($serv, $interval);
+    
+    function setDb();
 }

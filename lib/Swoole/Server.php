@@ -2,7 +2,6 @@
 
 namespace Swoole;
 
-use Database\Db;
 use Swoole\Server\Serv;
 
 class Server implements Interfaces\Driver {
@@ -10,24 +9,16 @@ class Server implements Interfaces\Driver {
     const EOF = "\r\n";
 
     protected $server;
-    protected $db;
     protected $server_conf;
-    protected $db_conf;
 
     public function init() {
-        $this->setDb();
         $this->setServer();
         $this->setting();
         $this->on();
     }
 
     public function __construct() {
-        $this->db_conf = require CONFPATH . 'db.php';
         $this->server_conf = require CONFPATH . 'server.php';
-    }
-
-    public function setDb() {
-        $this->db = Db::getInstance(DATA_TYPE_SSDB, $this->db_conf);
     }
 
     public function setServer() {
@@ -43,19 +34,36 @@ class Server implements Interfaces\Driver {
     }
 
     public function on() {
-        $this->server->swoole_server->on('WorkerStart', [$this->server, 'onStart']);
-        $this->server->swoole_server->on('WorkerStop', [$this->server, 'onStop']);
+        $this->server->on('WorkerStart', [$this->server, 'onStart']);
+        $this->server->on('WorkerStop', [$this->server, 'onStop']);
         //$this->server->swoole_server->on('receive', [$this->server, 'onReceive']);
-        $this->server->swoole_server->on('connect', function ($serv, $fd) {
+        $this->server->on('connect', function ($serv, $fd) {
             echo "Client:Connect.\n";
         });
-        $this->server->swoole_server->on('receive', function ($serv, $fd, $from_id, $data) {
+        $this->server->on('receive', function ($serv, $fd, $from_id, $data) {
             $serv->send($fd, 'Swoole: ' . $data);
             $serv->close($fd);
         });
-        $this->server->swoole_server->on('close', function ($serv, $fd) {
+        $this->server->on('close', function ($serv, $fd) {
             echo "Client: Close.\n";
         });
+
+        /* // Set Event Server callback function
+          $this->sw->on('Start', array($this, 'onMasterStart'));
+          $this->sw->on('ManagerStart', array($this, 'onManagerStart'));
+          $this->sw->on('WorkerStart', array($this, 'onWorkerStart'));
+          $this->sw->on('Connect', array($this, 'onConnect'));
+          $this->sw->on('Receive', array($this, 'onReceive'));
+          $this->sw->on('Close', array($this, 'onClose'));
+          $this->sw->on('WorkerStop', array($this, 'onWorkerStop'));
+          $this->sw->on('timer',array($this, 'onTimer'));
+          if ($this->enableHttp) {
+          $this->sw->on('Request', array($this, 'onRequest'));
+          }
+          if (isset($this->setting['task_worker_num'])) {
+          $this->sw->on('Task', array($this, 'onTask'));
+          $this->sw->on('Finish', array($this, 'onFinish'));
+          } */
     }
 
     public function run() {

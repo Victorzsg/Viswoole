@@ -4,7 +4,7 @@ namespace Database;
 
 interface DataInterface {
 
-    function pop();
+    function pop($data);
 
     function push();
 }

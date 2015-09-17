@@ -15,34 +15,39 @@ class Redis extends BaseDb {
     /**
      * 接口函数 出队
      * 接口类出队函数的具体实现
+     * @param string $queue_name 队列名
      */
-    public function pop() {
-        $this->db_client->lpop(self::LIST_QUEUE);
+    public function pop($queue_name) {
+        return $this->db_client->lpop($queue_name);
     }
 
     /**
      * 接口函数 入队
      * 接口类出队函数的具体实现
+     * @param string $queue_name 队列名
      * @param string $data 入队数据
      */
-    public function push($data) {
-        $this->db_client->lpush(self::LIST_QUEUE, $data);
+    public function push($queue_name, $data) {
+        return $this->db_client->lpush($queue_name, $data);
     }
 
     /**
-     * 接口函数 设置函数
-     * @param string $data 函数数据
+     * 接口函数 hash数据设置
+     * @param string $name 队列名
+     * @param string $key 键值
+     * @param string $value 数据
      */
-    public function set($data) {
-        $this->db_client->hset(self::HASH_QUEUE, $data, 1);
+    public function set($name, $key, $value) {
+        return $this->db_client->hset($name, $key, $value);
     }
 
     /**
-     * 接口函数 获取函数
-     * @param string $data 函数数据
+     * 接口函数 hash数据获取
+     * @param string $name 队列名
+     * @param string $key 键值
      */
-    public function get($data) {
-        $this->db_client->hget(self::HASH_QUEUE, $data);
+    public function get($name, $key) {
+        return $this->db_client->hget($name, $key);
     }
 
     /**

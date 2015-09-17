@@ -15,6 +15,8 @@ class Viswoole_Worker {
      * @var LoggerInterface Logging object that impliments the PSR-3 LoggerInterface
      */
     private $logger;
+    private $param = array();
+    private $worker = null;
 
     /**
      * @var array Array of all associated queues for this worker.
@@ -32,19 +34,54 @@ class Viswoole_Worker {
      *
      * @param string|array $queues String with a single queue name, array with multiple.
      */
-    public function __construct($queues) {
-        $this->logger = new Viswoole_Log();
+    public function __construct() {
+        //$this->logger = new Viswoole_Log();
+        /*!is_array($param) && $param = array($param);
+        $this->param = $param;*/
+        $this->worker = new \swoole_client(SWOOLE_SOCK_TCP | SWOOLE_KEEP);
+    }
 
-        !is_array($queues) && $queues = array($queues);
+    protected function on() {
+        $this->worker->on("connect", function($cli) {
+            $arr = json_encode(array("op" => "push", "data" => "Swoole::autoload"));
+            $cli->send($arr . "\r\n");
+        });
+        $this->worker->on("receive", function($cli, $data) {
+            echo "Received: " . $data . "\n";
+        });
+        $this->worker->on("error", function($cli) {
+            echo "Connect failed\n";
+        });
+        $this->worker->on("close", function($cli) {
+            echo "Connection close\n";
+            exit;
+        });
+    }
 
-        $this->queues = $queues;
+    public function addServer($host, $port) {
+        $this->worker->connect($host, $port, 0.5, 1);
+    }
+
+    public function addFunction($function_name, $function) {
+        $func = json_encode(array("op" => "set", "data" => array("funcname" => $function_name, "function" => $function)));
+        $this->worker->send($func);
+    }
+
+    public function work() {
+        $this->worker->connect($host, $port, 0.5, 1);
     }
 
     /**
-     * get the status of the server worker
+     * $worker= new GearmanWorker();    
+      $worker->addServer("127.0.0.1", 4730);
+      $worker->addFunction("title", "title_function");
+      while ($worker->work());
+
+      function title_function($job)
+      {
+      $str = $job->workload();
+      return strlen($str);
+      }
      */
-    public function getStat() {
-        
-    }
 
 }

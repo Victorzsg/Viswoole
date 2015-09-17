@@ -58,4 +58,17 @@ class Viswoole {
         $this->server->run();
     }
 
+    /**
+     * 自动加载类文件
+     */
+    public static function autoload($class) {
+        $root = explode('\\', trim($class, '\\'));
+        if (count($root) > 1) {
+            $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+            include_once __DIR__ . DIRECTORY_SEPARATOR . $class . '.php';
+        }
+    }
+
 }
+
+spl_autoload_register(['Viswoole', 'autoload']);

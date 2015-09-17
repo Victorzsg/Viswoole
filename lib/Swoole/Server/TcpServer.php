@@ -64,6 +64,7 @@ class TcpServer extends BaseServer {
     public function onReceive($serv, $fd, $reactor_id, $data) {
 
         $json_data = json_decode($data, TRUE);
+        empty($json_data) && $json_data = array();
         $op = array_key_exists("op", $json_data) ? strtolower($json_data["op"]) : "";
         $op_data = array_key_exists("data", $json_data) ? $json_data["data"] : "";
 

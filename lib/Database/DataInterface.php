@@ -13,22 +13,29 @@ interface DataInterface {
 
     /**
      * 接口函数 出队
+     * @param string $name 队列名
      */
-    function pop();
+    function pop($name);
 
     /**
      * 接口函数 入队
+     * @param string $name 队列名
      * @param string $data 入队数据
      */
-    function push($data);
+    function push($name, $data);
 
     /**
-     * 接口函数 设置函数
+     * 接口函数 hash数据设置
+     * @param string $name 队列名
+     * @param string $key 键值
+     * @param string $value 数据
      */
-    function set($data);
+    function set($name, $key, $value);
 
     /**
-     * 接口函数 获取函数
+     * 接口函数 hash数据获取
+     * @param string $name 队列名
+     * @param string $key 键值
      */
-    function get($data);
+    function get($name, $key);
 }

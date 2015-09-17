@@ -10,6 +10,8 @@
 
 namespace Swoole\Server;
 
+use Viswoole\Controller\TcpController;
+
 class TcpServer extends BaseServer {
 
     /**
@@ -69,21 +71,24 @@ class TcpServer extends BaseServer {
         $op_data = array_key_exists("data", $json_data) ? $json_data["data"] : "";
 
         switch ($op) {
-            case HASH_TYPE_SET://设置函数调用
-                $this->db->set($op_data);
+            case HASH_TYPE_SET:
+                $value = TcpController::SetFunctionName($this->db, $op_data);
+                $flag = (empty($value)) ? FALSE : TRUE;
                 break;
-            case HASH_TYPE_GET://获取函数
-                $this->db->get($op_data);
-                break;
+            case HASH_TYPE_GET:
+                $value = TcpController::GetFunctionName($this->db, $op_data);
+                $flag = (empty($value)) ? FALSE : TRUE;
             case LIST_TYPE_POP:
-                $this->db->pop();
+                $value = TcpController::GetQueueData($this->db);
+                $flag = ($value === NULL_QUEUE_DATA) ? FALSE : TRUE;
                 break;
             case LIST_TYPE_PUSH:
-                $this->db->push($op_data);
+                $value = TcpController::InsQueueData($this->db, $op_data);
+                $flag = (empty($value)) ? FALSE : TRUE;
             default:
                 break;
         }
-        $serv->send($fd, 'Swoole: ' . $data);
+        $serv->send($fd, serialize(array("flag" => $flag, "data" => $value)));
         $serv->close($fd);
         /* $op = strtolower(strstr($data, ' ', true));
           //出队

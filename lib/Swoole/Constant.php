@@ -20,3 +20,13 @@ define("LIST_TYPE_PUSH", "push");
 
 //基本常量配置
 define("EOF", "\r\n");
+
+//错误编码
+define("NULL_QUEUE_DATA", 1000);
+
+//服务队列名称
+define("LIST_QUEUE", "list_queue");
+define("LIST_TEMP_QUEUE", "list_temp_queue");
+define("LIST_FINISH_QUEUE", "list_finish_queue");
+define("HASH_FUNCTION_QUEUE", "hash_function_queue");
+define("HASH_TEMP_QUEUE", "hash_temp_queue");

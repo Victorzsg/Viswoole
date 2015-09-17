@@ -17,28 +17,22 @@ class Viswoole_Worker {
     private $logger;
     private $param = array();
     private $worker = null;
+    private $callback = null;
+    private $host;
+    private $port;
+    private $timeout = 0.5;
 
     /**
      * @var array Array of all associated queues for this worker.
      */
     private $queues = array();
 
-    /**
-     * Instantiate a new worker, given a list of queues that it should be working
-     * on. The list of queues should be supplied in the priority that they should
-     * be checked for jobs (first come, first served)
-     *
-     * Passing a single '*' allows the worker to work on all queues in alphabetical
-     * order. You can easily add new queues dynamically and have them worked on using
-     * this method.
-     *
-     * @param string|array $queues String with a single queue name, array with multiple.
-     */
     public function __construct() {
         //$this->logger = new Viswoole_Log();
-        /*!is_array($param) && $param = array($param);
-        $this->param = $param;*/
-        $this->worker = new \swoole_client(SWOOLE_SOCK_TCP | SWOOLE_KEEP);
+        /* !is_array($param) && $param = array($param);
+          $this->param = $param; */
+        $this->worker = new \swoole_client(SWOOLE_SOCK_TCP);
+        $this->worker->set(array('open_eof_check' => true, 'package_eof' => EOF));
     }
 
     protected function on() {
@@ -59,16 +53,35 @@ class Viswoole_Worker {
     }
 
     public function addServer($host, $port) {
-        $this->worker->connect($host, $port, 0.5, 1);
+        $this->host = $host;
+        $this->port = $port;
+        //$this->worker->connect($host, $port, 0.5, 1);
     }
 
-    public function addFunction($function_name, $function) {
-        $func = json_encode(array("op" => "set", "data" => array("funcname" => $function_name, "function" => $function)));
-        $this->worker->send($func);
+    public function addFunction($function_name, $callback) {
+        $func = json_encode(array("op" => "set", "data" => array("funcname" => $function_name, "function" => $callback)));
+        $this->callback[$function_name] = $callback;
+        /*$this->worker->send($func);
+        if ($this->worker->send($func . EOF)) {
+            $result = $this->worker->recv();
+            if ($result === false) {
+                return false;
+            }
+            if (substr($result, 0, 2) == 'OK') {
+                return true;
+            } else {
+                $this->errMsg = substr($result, 4);
+                return false;
+            }
+        } else {
+            return false;
+        }*/
     }
 
     public function work() {
-        $this->worker->connect($host, $port, 0.5, 1);
+        if (!$this->worker->connect($this->host, $this->port, $this->timeout)) {
+            throw new Exception("cannot connect to server [$this->host: $this->port].");
+        }
     }
 
     /**
@@ -83,5 +96,4 @@ class Viswoole_Worker {
       return strlen($str);
       }
      */
-
 }

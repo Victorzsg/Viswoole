@@ -29,8 +29,10 @@ class TcpController {
         return $queue_data ? $queue_data : NULL_QUEUE_DATA;
     }
 
-    public static function SetFunctionName($db, $function_name) {
-        $back = $db->set(HASH_FUNCTION_QUEUE, $function_name, 1);
+    public static function SetFunctionName($db, $function_name, $fd) {
+        $back = 0;
+        $value = $db->get(HASH_FUNCTION_QUEUE, $function_name);
+        !$value && $back = $db->set(HASH_FUNCTION_QUEUE, $function_name, $fd);
         return $back;
     }
 

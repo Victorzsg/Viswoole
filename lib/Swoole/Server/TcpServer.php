@@ -72,8 +72,10 @@ class TcpServer extends BaseServer {
 
         switch ($op) {
             case HASH_TYPE_SET:
-                $value = TcpController::SetFunctionName($this->db, $op_data);
+                $value = TcpController::SetFunctionName($this->db, $op_data, $fd);
                 $flag = (empty($value)) ? FALSE : TRUE;
+                $serv->send($fd, serialize(array("flag" => $flag, "data" => $value)));
+                !$flag && $serv->close($fd);
                 break;
             case HASH_TYPE_GET:
                 $value = TcpController::GetFunctionName($this->db, $op_data);
@@ -85,11 +87,12 @@ class TcpServer extends BaseServer {
             case LIST_TYPE_PUSH:
                 $value = TcpController::InsQueueData($this->db, $op_data);
                 $flag = (empty($value)) ? FALSE : TRUE;
+                $serv->send($fd, serialize(array("flag" => $flag, "data" => $value)));
+                $serv->close($fd);
             default:
                 break;
         }
-        $serv->send($fd, serialize(array("flag" => $flag, "data" => $value)));
-        $serv->close($fd);
+        //$serv->close($fd);
         /* $op = strtolower(strstr($data, ' ', true));
           //出队
           if ($op == 'pop') {

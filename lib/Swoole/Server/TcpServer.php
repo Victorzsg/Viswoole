@@ -11,8 +11,15 @@
 namespace Swoole\Server;
 
 use Viswoole\Controller\TcpController;
+use Swoole\Observer;
 
 class TcpServer extends BaseServer {
+
+    /**
+     * 观察者
+     * @var type 
+     */
+    private $_observers = null;
 
     /**
      * 构造函数
@@ -26,6 +33,8 @@ class TcpServer extends BaseServer {
         array_key_exists("hostname", $config) && $this->host = $config["hostname"];
         array_key_exists("post", $config) && $this->port = $config["port"];
         $this->swoole_server = new \swoole_server($this->host, $this->port);
+
+        $this->register(new Observer);
     }
 
     public function onShutdown($serv, $workerId) {
@@ -87,6 +96,7 @@ class TcpServer extends BaseServer {
             case LIST_TYPE_PUSH:
                 $value = TcpController::InsQueueData($this->db, $op_data);
                 $flag = (empty($value)) ? FALSE : TRUE;
+                $flag && $this->notify($serv);
                 $serv->send($fd, serialize(array("flag" => $flag, "data" => $value)));
                 $serv->close($fd);
             default:
@@ -153,6 +163,22 @@ class TcpServer extends BaseServer {
      */
     public function on($name, $param) {
         $this->swoole_server->on($name, $param);
+    }
+
+    /**
+     * 观察者模式 通知观察者
+     * @param object swoole_server $serv
+     */
+    public function notify($serv) {
+        $this->_observers->wakenWorker($serv);
+    }
+
+    /**
+     * 观察者模式 注册观察者
+     * @param object $observer
+     */
+    public function register($observer) {
+        $this->_observers = $observer;
     }
 
 }

@@ -15,8 +15,8 @@ class Viswoole_Job {
      * @var LoggerInterface Logging object that impliments the PSR-3 LoggerInterface
      */
     private $logger;
-    private $param = array();
-    private $worker = null;
+    private $event = null;
+    private $job = null;
     private $callback = null;
     private $host;
     private $port;
@@ -26,24 +26,24 @@ class Viswoole_Job {
     public function __construct() {
 
         include_once LIBPATH . DIRECTORY_SEPARATOR . 'Swoole' . DIRECTORY_SEPARATOR . 'Constant.php';
-        $this->worker = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
+        $this->job = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
         //$this->worker->set(array('open_eof_check' => true, 'package_eof' => EOF));
         $this->on();
     }
 
     protected function on() {
-        $this->worker->on("connect", function($cli) {
-            $arr = json_encode(array("op" => "push", "data" => "Swoole::autoload"));
+        $this->job->on("connect", function($cli) {
+            $arr = json_encode(array("op" => "push", "data" => $this->event));
             $cli->send($arr . EOF);
         });
-        $this->worker->on("receive", function($cli, $data) {
+        $this->job->on("receive", function($cli, $data) {
             echo "Received: " . $data . "\n";
             $cli->close();
         });
-        $this->worker->on("error", function($cli) {
+        $this->job->on("error", function($cli) {
             echo "Connect failed!\n";
         });
-        $this->worker->on("close", function($cli) {
+        $this->job->on("close", function($cli) {
             echo "Connection close!\n";
             exit;
         });
@@ -54,9 +54,11 @@ class Viswoole_Job {
         $this->socket[] = $arr;
     }
 
-    public function toDo() {
+    public function toDo($function, $param) {
+        $event = json_encode(array("function" => $function, "param" => $param));
+        $this->event = $event;
         foreach ($this->socket as $key => $value) {
-            if (!$this->worker->connect($this->socket[$key]["host"], $this->socket[$key]["port"], $this->timeout)) {
+            if (!$this->job->connect($this->socket[$key]["host"], $this->socket[$key]["port"], $this->timeout)) {
                 throw new Exception("cannot connect to server [$this->host: $this->port].");
             }
         }
